@@ -3,8 +3,27 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Levinson — Personal Portfolio</title>
-<meta name="description" content="Levinson — hands-on CS student at Yuan Ze University. AI/ML research, web development and automation. Projects, research and credentials." />
+<title>Levinson · Personal Portfolio</title>
+<meta name="description" content="Levinson is a hands-on CS student at Yuan Ze University. AI/ML research, web development and automation. Projects, research and credentials." />
+
+<!-- Icons + theme color -->
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="assets/avatar.jpg" />
+<meta name="theme-color" content="#e0552f" />
+
+<!-- Open Graph / Twitter (link previews) -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Levinson · Personal Portfolio" />
+<meta property="og:description" content="Hands-on CS student at Yuan Ze University. AI/ML research, web development and automation." />
+<meta property="og:url" content="https://lelevinson.github.io/" />
+<meta property="og:image" content="https://lelevinson.github.io/assets/avatar.jpg" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Levinson · Personal Portfolio" />
+<meta name="twitter:description" content="Hands-on CS student at Yuan Ze University. AI/ML research, web development and automation." />
+<meta name="twitter:image" content="https://lelevinson.github.io/assets/avatar.jpg" />
+
+<!-- set theme before paint to avoid a flash -->
+<script>(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.classList.add('dark');}catch(e){}})();</script>
 
 <!-- Tailwind (Play CDN — no build step) -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -12,53 +31,95 @@
 <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 <!-- GLightbox for image lightboxes -->
 <link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet" />
-<!-- Fonts: Fraunces (serif display) + Inter (body) + JetBrains Mono (micro-labels) -->
+<!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 
 <script>
-  // Brand tokens — change `accent` here to re-skin the whole site.
   tailwind.config = {
+    darkMode: 'class',
     theme: { extend: {
       fontFamily: { serif: ['Fraunces','serif'], body: ['Inter','sans-serif'], mono: ['JetBrains Mono','monospace'] },
-      colors: { accent: '#e0552f', ink: '#16130f', paper: '#f8f6f1' },
+      colors: {
+        accent:  'rgb(var(--c-accent) / <alpha-value>)',
+        ink:     'rgb(var(--c-ink) / <alpha-value>)',
+        paper:   'rgb(var(--c-paper) / <alpha-value>)',
+        surface: 'rgb(var(--c-surface) / <alpha-value>)',
+      },
     }},
   };
 </script>
 <style>
-  body { background:#f8f6f1; color:#16130f; }
-  html { scroll-padding-top: 5rem; }
-  /* faint blueprint dot-grid — shows through the warm (transparent) bands only */
-  .dotgrid { background-image: radial-gradient(rgba(22,19,15,.06) 1px, transparent 1px); background-size: 22px 22px; }
-  .eyebrow { font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; }
+  /* theme tokens (space-separated RGB so Tailwind /opacity works) */
+  :root { --c-paper:248 246 241; --c-ink:22 19 15; --c-accent:224 85 47; --c-surface:255 255 255; }
+  .dark  { --c-paper:18 16 14;   --c-ink:237 233 227; --c-accent:234 112 78; --c-surface:40 36 31; }
 
-  /* animated underline (nav + text links) */
+  body { background:rgb(var(--c-paper)); color:rgb(var(--c-ink)); transition:background .3s ease, color .3s ease; overflow-x:clip; }
+  html { scroll-padding-top: 5rem; }
+
+  .dotgrid { background-image: radial-gradient(rgb(var(--c-ink) / .06) 1px, transparent 1px); background-size: 22px 22px; }
+  .eyebrow { font-family:'JetBrains Mono',monospace; font-size:.72rem; letter-spacing:.18em; text-transform:uppercase; }
+  .logo-plate { background:#fff; }        /* dark-coloured logos (Insight) */
+  .logo-plate-dark { background:#15201e; } /* white logos (Anfa) — fixed dark in both themes */
+
   .link-underline { background-image:linear-gradient(currentColor,currentColor); background-size:0% 1.5px; background-repeat:no-repeat; background-position:0 100%; transition:background-size .25s ease; }
   .link-underline:hover { background-size:100% 1.5px; }
 
-  /* card hover-lift */
-  .card-lift { transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-  .card-lift:hover { transform:translateY(-4px); box-shadow:0 18px 44px -22px rgba(22,19,15,.4); border-color:#e0552f; }
+  /* alive cards: 3D cursor tilt + spotlight glow (vars driven by JS) */
+  .card-lift {
+    position:relative;
+    transform: perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--ty,0));
+    transform-style:preserve-3d; will-change:transform;
+    transition: transform .18s ease, box-shadow .3s ease, border-color .3s ease;
+  }
+  /* bold coral outline + glow + lift on hover (static, edges only — never covers media) */
+  .card-lift:hover { --ty:-6px; border-color:rgb(var(--c-accent)); box-shadow:0 0 0 2px rgb(var(--c-accent) / .7), 0 22px 48px -18px rgb(var(--c-accent) / .5); }
 
-  /* tech chip */
-  .chip { font-family:'JetBrains Mono',monospace; font-size:.7rem; line-height:1; border:1px solid rgba(22,19,15,.12); border-radius:.3rem; padding:.32rem .55rem; color:rgba(22,19,15,.6); transition:all .2s ease; }
-  .chip:hover { border-color:#e0552f; color:#e0552f; transform:translateY(-1px); }
+  /* per-section Claude Code — a clip-window hides everything; the inner slide carries him up/in,
+     so only the part past the edge shows (the rest stays clipped behind the bar) */
+  .has-peek { position:relative; }
+  .peek { position:absolute; overflow:hidden; pointer-events:none; z-index:30; }
+  .peek-slide { position:absolute; transition:transform .55s cubic-bezier(.34,1.5,.6,1); }
+  .peek img { display:block; filter:drop-shadow(0 4px 7px rgb(0 0 0 / .2)); }
 
-  /* credential row — arrow nudges on hover */
+  /* section peeks — bigger logo; slide has top padding so the head never hits the clip edge */
+  .peek { left:1.75rem; bottom:100%; width:90px; height:78px; }
+  .peek-slide { left:0; top:14px; width:90px; transform:translateY(120%); }
+  .peek-slide img { width:90px; height:auto; }
+  .has-peek:hover .peek-slide { transform:translateY(0); }
+
+  /* sections alternate which side they peep from: left, right, left, right … */
+  .peek-right { left:auto; right:1.75rem; }
+
+  /* hero peek — ROTATED 90°, peeps out from behind the photo's RIGHT edge, vertically middle-upper */
+  .peek-hero { left:100%; bottom:auto; top:28%; width:50px; height:82px; }
+  .peek-hero .peek-slide { left:0; top:0; width:82px; height:82px; transform:translateX(-100%); }
+  .peek-hero .peek-slide img { position:absolute; top:50%; left:50%; width:auto; height:66px; transform:translate(-50%,-50%) rotate(90deg); transform-origin:center; }
+  .has-peek:hover .peek-hero .peek-slide { transform:translateX(-34%); }
+
+  .chip { font-family:'JetBrains Mono',monospace; font-size:.7rem; line-height:1; border:1px solid rgb(var(--c-ink) / .12); border-radius:.3rem; padding:.32rem .55rem; color:rgb(var(--c-ink) / .6); transition:all .2s ease; }
+  .chip:hover { border-color:rgb(var(--c-accent)); color:rgb(var(--c-accent)); transform:translateY(-1px); }
+
   .cred { transition:border-color .2s ease, padding-left .2s ease; }
-  .cred:hover { border-color:#e0552f; padding-left:.4rem; }
+  .cred:hover { border-color:rgb(var(--c-accent)); padding-left:.4rem; }
 
-  /* scroll progress bar */
   #progress { transition:width .08s linear; }
 
-  /* hero brand-card cycling highlight */
-  .cycle span { display:block; color:rgba(22,19,15,.4); animation:cycleHL 5.4s infinite; }
+  .cycle span { display:block; color:rgb(var(--c-ink) / .4); animation:cycleHL 5.4s infinite; }
   .cycle span:nth-child(2){ animation-delay:1.8s; }
   .cycle span:nth-child(3){ animation-delay:3.6s; }
-  @keyframes cycleHL { 0%,16%{ color:#e0552f; transform:translateX(3px);} 34%,100%{ color:rgba(22,19,15,.4); transform:translateX(0);} }
+  @keyframes cycleHL { 0%,16%{ color:rgb(var(--c-accent)); transform:translateX(3px);} 34%,100%{ color:rgb(var(--c-ink) / .4); transform:translateX(0);} }
 
-  @media (prefers-reduced-motion: reduce) { .cycle span { animation:none; } #progress { display:none; } }
+  /* dark-mode toggle icon swap */
+  .icon-sun { display:none; } .dark .icon-sun { display:block; } .dark .icon-moon { display:none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cycle span { animation:none; }
+    #progress { display:none; }
+    .card-lift { transform:none !important; }
+    .peek { display:none; }
+  }
 </style>
 </head>
 <body class="font-body antialiased selection:bg-accent/20">
@@ -75,7 +136,7 @@
       <span class="grid place-items-center w-8 h-8 rounded-lg bg-accent text-paper font-serif font-semibold leading-none">L</span>
       <span class="font-serif text-lg font-semibold tracking-tight">Personal Portfolio</span>
     </a>
-    <div class="hidden md:flex gap-8 text-sm text-ink/70">
+    <div id="nav-links" class="hidden md:flex gap-8 text-sm text-ink/70">
       <a href="#work" class="link-underline hover:text-accent transition">Work</a>
       <a href="#research" class="link-underline hover:text-accent transition">Research</a>
       <a href="#skills" class="link-underline hover:text-accent transition">Skills</a>
@@ -83,9 +144,16 @@
       <a href="#experience" class="link-underline hover:text-accent transition">Experience</a>
       <a href="#contact" class="link-underline hover:text-accent transition">Contact</a>
     </div>
-    <a href="https://pda.104.com.tw/profile/share/a6GPoJmgqsi5ZNhJLX0slmxT5M0x3mb5"
-       target="_blank" rel="noopener"
-       class="text-sm font-medium rounded-full border border-ink/20 px-4 py-1.5 hover:border-accent hover:text-accent transition">104 CV ↗</a>
+    <div class="flex items-center gap-2.5">
+      <button type="button" id="theme-toggle" aria-label="Toggle dark mode"
+        class="grid place-items-center w-9 h-9 rounded-full border border-ink/20 text-ink/70 hover:border-accent hover:text-accent transition">
+        <svg class="icon-moon w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+      <a href="https://pda.104.com.tw/profile/share/a6GPoJmgqsi5ZNhJLX0slmxT5M0x3mb5"
+         target="_blank" rel="noopener"
+         class="text-sm font-medium rounded-full border border-ink/20 px-4 py-1.5 hover:border-accent hover:text-accent transition">104 CV ↗</a>
+    </div>
   </nav>
 </header>
 
@@ -101,8 +169,8 @@
         I build ideas into real tools.
       </p>
       <p class="mt-6 max-w-xl text-lg text-ink/70 leading-relaxed" data-aos="fade-up" data-aos-delay="180">
-        A hands-on CS student at Yuan Ze University who learns by doing — turning everyday problems
-        into working software, and researching computer vision along the way.
+        A hands-on CS student at Yuan Ze University who learns by doing. I turn everyday problems
+        into working software, and research computer vision along the way.
       </p>
       <div class="mt-9 flex flex-wrap gap-3" data-aos="fade-up" data-aos-delay="240">
         <a href="#work" class="rounded-full px-6 py-2.5 text-sm font-semibold bg-ink text-paper hover:bg-accent transition">View Work</a>
@@ -110,9 +178,8 @@
       </div>
     </div>
     <!-- brand card with avatar photo -->
-    <div class="lg:col-span-4" data-aos="fade-up" data-aos-delay="200">
-      <div class="relative rounded-2xl border border-ink/10 bg-white p-5 shadow-[0_24px_70px_-35px_rgba(22,19,15,.45)] overflow-hidden">
-        <div class="absolute -top-12 -right-12 w-44 h-44 rounded-full bg-accent/15 blur-3xl"></div>
+    <div id="avatar-col" class="lg:col-span-4 relative" data-aos="fade-up" data-aos-delay="200">
+      <div class="relative rounded-2xl border border-ink/10 bg-surface p-5 shadow-[0_24px_70px_-35px_rgba(0,0,0,.45)] overflow-hidden">
         <div class="relative aspect-square w-full rounded-xl overflow-hidden border border-ink/10">
           <img src="assets/avatar.jpg" alt="Levinson" class="w-full h-full object-cover" />
         </div>
@@ -140,14 +207,14 @@
   </div>
 </section>
 
-<!-- ===================== ABOUT (white band) ===================== -->
-<section id="about" class="bg-white border-b border-ink/10">
+<!-- ===================== ABOUT (surface band) ===================== -->
+<section id="about" class="bg-surface border-b border-ink/10">
   <div class="mx-auto max-w-6xl px-6 py-20 grid lg:grid-cols-12 gap-10">
     <div class="lg:col-span-7" data-aos="fade-up">
       <p class="eyebrow text-accent">About</p>
       <h2 class="mt-3 font-serif text-3xl font-semibold">Hands-on by nature.</h2>
       <div class="mt-5 space-y-4 text-ink/75 leading-relaxed">
-        <p>I'm a hands-on learner — instead of only studying theory, I learn best by joining real projects,
+        <p>I'm a hands-on learner. Instead of only studying theory, I learn best by joining real projects,
            research work and team activities where I can try things, make mistakes, and improve.</p>
         <p>That's taken me from building a working web platform (BinBeacon) and a campus LINE Bot (WaiZiYu),
            to computer-vision research where I read papers, run experiments, organize results, and prepare a
@@ -163,11 +230,11 @@
       </div>
       <div class="rounded-xl border border-ink/10 bg-paper p-5 card-lift">
         <p class="eyebrow text-ink/50">Languages</p>
-        <p class="mt-2 text-sm text-ink/70">English — proficient<br/>Indonesian — native<br/>中文 — intermediate (HSK 5)</p>
+        <p class="mt-2 text-sm text-ink/70">Proficient English<br/>Native Indonesian<br/>Intermediate 中文 (HSK 5)</p>
       </div>
       <div class="rounded-xl border border-accent/30 bg-accent/5 p-5 card-lift">
         <p class="eyebrow text-accent">Now</p>
-        <p class="mt-2 text-sm text-ink/75">Learning AI-automation workflows &amp; agent/Skills design — and writing this site by hand with an AI pair.</p>
+        <p class="mt-2 text-sm text-ink/75">Learning AI-automation workflows &amp; agent/Skills design, and writing this site by hand with an AI pair.</p>
       </div>
     </div>
   </div>
@@ -183,12 +250,12 @@
 
     <div class="mt-10 grid lg:grid-cols-2 gap-6">
       <!-- BinBeacon -->
-      <article class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up">
+      <article class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up">
         <div class="flex items-center justify-between">
           <h3 class="font-serif text-2xl font-semibold">BinBeacon</h3>
           <span class="eyebrow text-ink/45">Web · Maps</span>
         </div>
-        <p class="mt-3 text-ink/75">A shared trash-bin map platform — users find nearby bins and add or update their
+        <p class="mt-3 text-ink/75">A shared trash-bin map platform where users find nearby bins and add or update their
           location &amp; status. I built the front end, map interaction and user flow, and connected it to the back-end API.</p>
         <div class="mt-5 aspect-video rounded-xl overflow-hidden border border-ink/10 shadow-sm bg-ink/5">
           <iframe class="w-full h-full" src="https://www.youtube-nocookie.com/embed/hXQtSgthLUU"
@@ -207,15 +274,15 @@
       </article>
 
       <!-- WaiZiYu -->
-      <article class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="80">
+      <article class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="80">
         <div class="flex items-center justify-between">
           <h3 class="font-serif text-2xl font-semibold">WaiZiYu</h3>
           <span class="eyebrow text-ink/45">Python · Bot</span>
         </div>
-        <p class="mt-3 text-ink/75">A LINE Bot that lets students query the Yuan Ze portal from chat — courses,
+        <p class="mt-3 text-ink/75">A LINE Bot that lets students query the Yuan Ze portal from chat: courses,
           assignments and events. I built the portal scraper, a scheduled crawl, and per-student storage in Supabase.</p>
         <a href="assets/waiziyu.png" class="glightbox mt-5 block aspect-video rounded-xl overflow-hidden border border-ink/10 shadow-sm group"
-           data-gallery="waiziyu" data-title="WaiZiYu — Yuan Ze portal LINE Bot">
+           data-gallery="waiziyu" data-title="WaiZiYu, the Yuan Ze portal LINE Bot">
           <img src="assets/waiziyu.png" alt="WaiZiYu LINE Bot screenshot" loading="lazy"
                class="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500" />
         </a>
@@ -228,32 +295,35 @@
         </div>
       </article>
 
-      <!-- DeskClaw — in progress (full width) -->
-      <article class="card-lift lg:col-span-2 rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up">
-        <div class="flex flex-wrap items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
+      <!-- DeskClaw — shipped (full width, mascot) -->
+      <article class="card-lift lg:col-span-2 rounded-2xl border border-ink/10 bg-surface p-6 lg:p-8 grid lg:grid-cols-2 gap-8 items-center" data-aos="fade-up">
+        <div>
+          <div class="flex flex-wrap items-center gap-3">
             <h3 class="font-serif text-2xl font-semibold">DeskClaw</h3>
             <span class="eyebrow text-ink/45">AI Agent · TypeScript</span>
+            <span class="font-mono text-xs rounded-full bg-accent/10 text-accent px-3 py-1.5">v1 · shipped</span>
           </div>
-          <span class="font-mono text-xs rounded-full bg-ink/5 text-ink/60 px-3 py-1.5">in progress</span>
+          <p class="mt-3 text-ink/75">A conversational-commerce agent for small D2C brands, with automated support,
+            product assistance and safe human-handoff grounded in local business docs &amp; a product catalog. Built on
+            OpenClaw orchestration with an MCP shop-action server, running a local Ollama model or gpt-5.5 inside a Dev Container workflow.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <span class="chip">TypeScript</span><span class="chip">OpenClaw</span><span class="chip">MCP</span>
+            <span class="chip">Ollama / gpt-5.5</span><span class="chip">Docker · DevContainer</span><span class="chip">AI Agents</span>
+          </div>
+          <div class="mt-5 flex gap-5 text-sm font-medium">
+            <a href="https://github.com/Lelevinson/deskclaw" target="_blank" rel="noopener" class="text-ink/70 hover:text-accent transition">Repo ↗</a>
+          </div>
         </div>
-        <p class="mt-3 text-ink/75 max-w-3xl">A conversational-commerce agent for small D2C brands — automated support,
-          product assistance and safe human-handoff grounded in local business docs &amp; a product catalog. Built on
-          OpenClaw orchestration with an MCP shop-action server, running a local Ollama model or gpt-5.5 inside a Dev Container workflow.</p>
-        <div class="mt-4 flex flex-wrap gap-2">
-          <span class="chip">TypeScript</span><span class="chip">OpenClaw</span><span class="chip">MCP</span>
-          <span class="chip">Ollama / gpt-5.5</span><span class="chip">Docker · DevContainer</span><span class="chip">AI Agents</span>
-        </div>
-        <div class="mt-5 flex gap-5 text-sm font-medium">
-          <a href="https://github.com/Lelevinson/deskclaw" target="_blank" rel="noopener" class="text-ink/70 hover:text-accent transition">Repo ↗</a>
+        <div class="rounded-xl border border-ink/10 bg-paper grid place-items-center p-6">
+          <img src="assets/deskclaw.png" alt="DeskClaw mascot, a headset-wearing lobster at a computer" loading="lazy" class="max-h-56 w-auto drop-shadow-sm" />
         </div>
       </article>
     </div>
   </div>
 </section>
 
-<!-- ===================== RESEARCH (white band) ===================== -->
-<section id="research" class="bg-white border-b border-ink/10">
+<!-- ===================== RESEARCH (surface band) ===================== -->
+<section id="research" class="bg-surface border-b border-ink/10">
   <div class="mx-auto max-w-6xl px-6 py-20">
     <div class="flex items-baseline gap-4" data-aos="fade-up">
       <span class="eyebrow text-accent">02</span>
@@ -264,7 +334,7 @@
         <div class="flex-1">
           <h3 class="font-serif text-xl font-semibold">Feature-Aware Knowledge Distillation for Lightweight SwinIR SISR</h3>
           <p class="mt-2 text-ink/75 text-sm"><span class="font-semibold text-ink">First author.</span> A lightweight
-            student model with feature-level knowledge distillation for single-image super-resolution — I led the
+            student model with feature-level knowledge distillation for single-image super-resolution. I led the
             student-model rewrite, training/testing, log &amp; metric organization, and result figures.</p>
           <div class="mt-3 flex flex-wrap gap-2">
             <span class="chip">PyTorch</span><span class="chip">SwinIR</span><span class="chip">Knowledge Distillation</span><span class="chip">PSNR/SSIM</span>
@@ -275,9 +345,9 @@
       </article>
       <article class="card-lift rounded-2xl border border-ink/10 bg-paper p-6 flex flex-col sm:flex-row sm:items-center gap-4" data-aos="fade-up" data-aos-delay="80">
         <div class="flex-1">
-          <h3 class="font-serif text-xl font-semibold">Lite-Mono — Monocular Depth Estimation</h3>
+          <h3 class="font-serif text-xl font-semibold">Lite-Mono: Monocular Depth Estimation</h3>
           <p class="mt-2 text-ink/75 text-sm">Studying self-supervised monocular depth estimation on the Lite-Mono
-            baseline — architecture, training pipeline and evaluation — and planning verifiable improvements.</p>
+            baseline (architecture, training pipeline and evaluation) and planning verifiable improvements.</p>
           <div class="mt-3 flex flex-wrap gap-2">
             <span class="chip">PyTorch</span><span class="chip">Computer Vision</span><span class="chip">Depth Estimation</span><span class="chip">Linux</span>
           </div>
@@ -297,27 +367,27 @@
       <h2 class="font-serif text-3xl font-semibold">Skills &amp; Tools</h2>
     </div>
     <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up">
         <p class="eyebrow text-accent">Programming</p>
-        <p class="mt-3 text-sm text-ink/75">Python · C++ · JavaScript · HTML · CSS</p>
+        <p class="mt-3 text-sm text-ink/75">Python · C++ · JavaScript · PHP · HTML · CSS</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="50">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="50">
         <p class="eyebrow text-accent">AI / ML / CV</p>
         <p class="mt-3 text-sm text-ink/75">PyTorch · OpenCV · NumPy · Pandas · Super-Resolution · Depth Estimation</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="100">
         <p class="eyebrow text-accent">Web &amp; API</p>
-        <p class="mt-3 text-sm text-ink/75">React / Vite · Node / Express · REST APIs · Postman · Vercel · Render · Supabase</p>
+        <p class="mt-3 text-sm text-ink/75">React / Vite · Node / Express · Laravel · REST APIs · Postman · MySQL · Vercel · Render · Supabase</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up">
         <p class="eyebrow text-accent">Automation &amp; Data</p>
         <p class="mt-3 text-sm text-ink/75">n8n · Selenium · BeautifulSoup · data cleaning &amp; pipelines</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="50">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="50">
         <p class="eyebrow text-accent">AI-Assisted Dev</p>
         <p class="mt-3 text-sm text-ink/75">Claude Code · GitHub Copilot · Codex · Gemini CLI · agentic coding workflows</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="100">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="100">
         <p class="eyebrow text-accent">Tools &amp; Workflow</p>
         <p class="mt-3 text-sm text-ink/75">Git / GitHub · Linux · Docker · DevContainer · Jira / Scrum</p>
       </div>
@@ -325,8 +395,8 @@
   </div>
 </section>
 
-<!-- ===================== CREDENTIALS (white band) ===================== -->
-<section id="certs" class="bg-white border-b border-ink/10">
+<!-- ===================== CREDENTIALS (surface band) ===================== -->
+<section id="certs" class="bg-surface border-b border-ink/10">
   <div class="mx-auto max-w-6xl px-6 py-20">
     <div class="flex items-baseline gap-4" data-aos="fade-up">
       <span class="eyebrow text-accent">04</span>
@@ -356,11 +426,11 @@
         <span class="text-ink/45 text-xs font-mono">278 / 300 · PDF ↗</span>
       </a>
       <a href="assets/certs/silver-113.pdf" target="_blank" rel="noopener" class="cred group flex justify-between items-center py-3.5 border-b border-ink/10">
-        <span class="font-medium group-hover:text-accent">Academic Silver Medal — 113</span>
+        <span class="font-medium group-hover:text-accent">Academic Silver Medal · 113</span>
         <span class="text-ink/45 text-xs font-mono">Rank #1 · PDF ↗</span>
       </a>
       <a href="assets/certs/silver-114.pdf" target="_blank" rel="noopener" class="cred group flex justify-between items-center py-3.5 border-b border-ink/10">
-        <span class="font-medium group-hover:text-accent">Academic Silver Medal — 114</span>
+        <span class="font-medium group-hover:text-accent">Academic Silver Medal · 114</span>
         <span class="text-ink/45 text-xs font-mono">Rank #1 · PDF ↗</span>
       </a>
     </div>
@@ -374,24 +444,49 @@
       <span class="eyebrow text-accent">05</span>
       <h2 class="font-serif text-3xl font-semibold">Experience &amp; Leadership</h2>
     </div>
-    <!-- Featured: current internship -->
-    <article class="card-lift mt-10 rounded-2xl border border-ink/10 bg-white p-6 lg:p-8 grid lg:grid-cols-2 gap-8 items-center" data-aos="fade-up">
+
+    <!-- Featured: CURRENT internship (on-site) -->
+    <article class="card-lift mt-10 rounded-2xl border border-ink/10 bg-surface p-6 lg:p-8 grid lg:grid-cols-2 gap-8 items-center" data-aos="fade-up">
       <div>
         <div class="flex items-center gap-2.5">
-          <span class="eyebrow text-accent">Current · Remote</span>
+          <span class="eyebrow text-accent">Current · On-site</span>
           <span class="relative flex h-2 w-2">
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-500 opacity-70"></span>
             <span class="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
           </span>
         </div>
-        <h3 class="mt-3 font-serif text-2xl font-semibold">Software Development Intern</h3>
-        <p class="text-sm text-ink/55">Insight Software · 2026 – present</p>
-        <p class="mt-4 text-ink/75 text-sm leading-relaxed">Building web apps and internal tooling for
+        <h3 class="mt-3 font-serif text-2xl font-semibold">Information Engineering Intern</h3>
+        <p class="text-sm text-ink/55">Anfa Clinic (安法診所) · 2026 – present</p>
+        <p class="mt-4 text-ink/75 text-sm leading-relaxed">An on-site engineering internship at a medical clinic.
+          Learning PHP / Laravel and MySQL to build an internal system dashboard for clinical departments
+          (nursing, physicians and more), alongside day-to-day IT support (hardware, networking and internal
+          tools), working with the team in the office.</p>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <span class="chip">PHP</span><span class="chip">Laravel</span><span class="chip">MySQL</span>
+          <span class="chip">IT Support</span><span class="chip">Networking</span><span class="chip">On-site team</span>
+        </div>
+        <div class="mt-5 flex gap-5 text-sm font-medium">
+          <a href="https://www.anfa.com.tw/" target="_blank" rel="noopener" class="text-ink/70 hover:text-accent transition">Anfa Clinic ↗</a>
+        </div>
+      </div>
+      <a href="https://www.anfa.com.tw/" target="_blank" rel="noopener"
+         class="logo-plate-dark aspect-video rounded-xl border border-ink/10 grid place-items-center p-10 group" title="Anfa Clinic 安法診所">
+        <img src="assets/anfa-logo.svg" alt="Anfa Clinic" loading="lazy"
+             class="max-h-14 w-auto opacity-90 group-hover:opacity-100 group-hover:scale-[1.03] transition" />
+      </a>
+    </article>
+
+    <!-- PAST internship: Insight Software -->
+    <article class="card-lift mt-6 rounded-2xl border border-ink/10 bg-surface p-6 lg:p-8 grid lg:grid-cols-2 gap-8 items-center" data-aos="fade-up">
+      <div>
+        <span class="eyebrow text-ink/45">2026 · Remote</span>
+        <h3 class="mt-2 font-serif text-2xl font-semibold">Software Development Intern</h3>
+        <p class="text-sm text-ink/55">Insight Software</p>
+        <p class="mt-4 text-ink/75 text-sm leading-relaxed">Built web apps and internal tooling for
           <a href="https://www.aitoken.global/en/" target="_blank" rel="noopener" class="text-accent link-underline font-medium">aitoken.global</a>,
-          an Astro&nbsp;+&nbsp;Sanity content platform. I built an SEO-analytics dashboard wiring up Google Search
-          Console, GA4 and Cloudflare; maintain and fix the Astro static front end; and build cloud AI agents —
-          including a multilingual translation engine — plus content-automation workflows that carry posts from
-          draft to published blog.</p>
+          an Astro&nbsp;+&nbsp;Sanity content platform: an SEO-analytics dashboard wiring Google Search Console, GA4 and
+          Cloudflare; Astro front-end maintenance; and cloud AI agents (including a multilingual translation engine),
+          plus content-automation workflows from draft to published blog.</p>
         <div class="mt-4 flex flex-wrap gap-2">
           <span class="chip">Astro</span><span class="chip">Sanity</span><span class="chip">Search Console</span>
           <span class="chip">GA4</span><span class="chip">Cloudflare</span><span class="chip">AI agents</span><span class="chip">Automation</span>
@@ -402,30 +497,31 @@
         </div>
       </div>
       <a href="https://www.insight-software.com/" target="_blank" rel="noopener"
-         class="aspect-video rounded-xl border border-ink/10 bg-paper grid place-items-center p-10 group" title="Insight Software">
+         class="logo-plate aspect-video rounded-xl border border-ink/10 grid place-items-center p-10 group" title="Insight Software">
         <img src="assets/insight-logo.svg" alt="Insight Software" loading="lazy"
              class="max-h-16 w-auto opacity-90 group-hover:opacity-100 group-hover:scale-[1.03] transition" />
       </a>
     </article>
 
+    <!-- earlier roles -->
     <div class="mt-6 grid lg:grid-cols-3 gap-6">
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up">
         <p class="eyebrow text-ink/45">2024 – 2026</p>
         <h3 class="mt-2 font-serif text-lg font-semibold">Programming &amp; Math Tutor</h3>
         <p class="text-sm text-ink/55">Yuan Ze University</p>
-        <p class="mt-3 text-sm text-ink/75">Tutored C++ and Python in the campus Programming Corner — syntax,
+        <p class="mt-3 text-sm text-ink/75">Tutored C++ and Python in the campus Programming Corner: syntax,
           debugging, assignment logic and problem-solving, one-on-one and in small groups.</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="60">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="60">
         <p class="eyebrow text-ink/45">2025</p>
         <h3 class="mt-2 font-serif text-lg font-semibold">Game Consultant (Text CS)</h3>
         <p class="text-sm text-ink/55">Gamania · <em>Crystal of Atlan</em></p>
         <p class="mt-3 text-sm text-ink/75">Supported the Indonesian player community, triaged bugs &amp; account
           issues, logged daily case reports, and helped localize feedback across EN / ZH / ID.</p>
       </div>
-      <div class="card-lift rounded-2xl border border-ink/10 bg-white p-6" data-aos="fade-up" data-aos-delay="120">
+      <div class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up" data-aos-delay="120">
         <p class="eyebrow text-ink/45">2024 – 2025</p>
-        <h3 class="mt-2 font-serif text-lg font-semibold">Student Association — Treasurer &amp; MC</h3>
+        <h3 class="mt-2 font-serif text-lg font-semibold">Student Association · Treasurer &amp; MC</h3>
         <p class="text-sm text-ink/55">Dept. of Informatics · Indonesian Student Club</p>
         <p class="mt-3 text-sm text-ink/75">Managed event budgets &amp; post-event reports; hosted a graduation
           event as bilingual (EN/中文) MC; ran media &amp; PR for the Indonesian student community.</p>
@@ -434,8 +530,8 @@
   </div>
 </section>
 
-<!-- ===================== CONTACT (white band) ===================== -->
-<section id="contact" class="bg-white">
+<!-- ===================== CONTACT (surface band) ===================== -->
+<section id="contact" class="bg-surface">
   <div class="mx-auto max-w-6xl px-6 py-24">
     <div class="grid lg:grid-cols-12 gap-8 items-center">
       <div class="lg:col-span-8" data-aos="fade-up">
@@ -463,21 +559,83 @@
 
 </div><!-- /dotgrid -->
 
+<!-- back to top -->
+<button type="button" id="toTop" aria-label="Back to top"
+  class="fixed bottom-6 right-6 z-[55] grid place-items-center w-11 h-11 rounded-full bg-ink text-paper shadow-lg opacity-0 pointer-events-none transition hover:bg-accent">
+  <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
 <!-- ===================== SCRIPTS ===================== -->
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
 <script>
   AOS.init({ once:true, duration:650, easing:'ease-out' });
   GLightbox({ selector:'.glightbox' });
-  // scroll progress bar
+
+  // scroll progress + back-to-top
   const bar = document.getElementById('progress');
+  const toTop = document.getElementById('toTop');
   const onScroll = () => {
     const h = document.documentElement;
-    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
-    bar.style.width = pct + '%';
+    bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100 + '%';
+    toTop.classList.toggle('opacity-0', h.scrollTop <= 500);
+    toTop.classList.toggle('pointer-events-none', h.scrollTop <= 500);
   };
   document.addEventListener('scroll', onScroll, { passive:true });
   onScroll();
+  toTop.addEventListener('click', () => window.scrollTo({ top:0, behavior:'smooth' }));
+
+  // dark mode toggle
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch(e){}
+  });
+
+  // scrollspy — highlight the nav link of the section in view
+  const navLinks = [...document.querySelectorAll('#nav-links a')];
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(en => {
+      if (en.isIntersecting) {
+        const id = '#' + en.target.id;
+        navLinks.forEach(l => l.classList.toggle('text-accent', l.getAttribute('href') === id));
+      }
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  ['work','research','skills','certs','experience','contact'].forEach(id => {
+    const el = document.getElementById(id); if (el) spy.observe(el);
+  });
+
+  // motion features (skipped if reduced-motion)
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    // subtle cursor tilt on cards
+    document.querySelectorAll('.card-lift').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width;
+        const y = (e.clientY - r.top) / r.height;
+        card.style.setProperty('--rx', ((0.5 - y) * 5).toFixed(2) + 'deg');
+        card.style.setProperty('--ry', ((x - 0.5) * 5).toFixed(2) + 'deg');
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg');
+      });
+    });
+
+    // per-section Claude Code — peeps over each section's top bar on hover
+    const mkPeek = (cls) => {
+      const d = document.createElement('div');
+      d.className = 'peek' + (cls ? ' ' + cls : '');
+      d.setAttribute('aria-hidden', 'true');
+      d.innerHTML = '<div class="peek-slide"><img src="assets/claude-code.png?v=6" alt="" /></div>';
+      return d;
+    };
+    document.querySelectorAll('section').forEach((s, i) => {
+      s.classList.add('has-peek');
+      if (i !== 0) s.appendChild(mkPeek(i % 2 === 0 ? 'peek-right' : ''));  // alternate left/right
+    });
+    const col = document.getElementById('avatar-col');       // hero: peeps from behind the photo's right edge
+    if (col) col.appendChild(mkPeek('peek-hero'));
+  }
 </script>
 </body>
 </html>
