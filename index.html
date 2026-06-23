@@ -98,6 +98,19 @@
   .peek-hero .peek-slide img { position:absolute; top:50%; left:50%; width:auto; height:66px; transform:translate(-50%,-50%) rotate(90deg); transform-origin:center; }
   .has-peek:hover .peek-hero .peek-slide { transform:translateX(-34%); }
 
+  /* hero EXTRA (MOBILE ONLY): a mascot hangs upside-down from the navbar */
+  .peek-nav { display:none; left:50%; right:auto; top:0; bottom:auto; width:84px; height:124px; margin-left:-42px; }
+  .peek-nav .peek-slide { top:0; bottom:auto; left:0; width:84px; transform:translateY(-120%); }
+  .peek-nav .peek-slide img { width:84px; height:auto; transform:rotate(180deg); }
+
+  /* MOBILE (phone width): no hover, so reveal each section's mascot on scroll instead */
+  @media (max-width: 767px) {
+    .peek-hero { display:none; }                                  /* hero's right-edge peek would be a clipped sliver on phones */
+    .peek-nav { display:block; }                                  /* the navbar-hang mascot is mobile-only */
+    .has-peek.peek-show .peek-slide { transform:translateY(0); }
+    .has-peek.peek-show .peek-nav .peek-slide { transform:translateY(-37%); }  /* head + body peek below the navbar; legs clipped at the bar */
+  }
+
   .chip { font-family:'JetBrains Mono',monospace; font-size:.7rem; line-height:1; border:1px solid rgb(var(--c-ink) / .12); border-radius:.3rem; padding:.32rem .55rem; color:rgb(var(--c-ink) / .6); transition:all .2s ease; }
   .chip:hover { border-color:rgb(var(--c-accent)); color:rgb(var(--c-accent)); transform:translateY(-1px); }
 
@@ -113,6 +126,7 @@
 
   /* dark-mode toggle icon swap */
   .icon-sun { display:none; } .dark .icon-sun { display:block; } .dark .icon-moon { display:none; }
+  #menu-toggle .icon-x { display:none; } #menu-toggle.open .icon-x { display:block; } #menu-toggle.open .icon-bars { display:none; }
 
   @media (prefers-reduced-motion: reduce) {
     .cycle span { animation:none; }
@@ -134,8 +148,10 @@
   <nav class="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
     <a href="#" class="flex items-center gap-2.5">
       <span class="grid place-items-center w-8 h-8 rounded-lg bg-accent text-paper font-serif font-semibold leading-none">L</span>
-      <span class="font-serif text-lg font-semibold tracking-tight">Personal Portfolio</span>
+      <span class="hidden sm:inline font-serif text-lg font-semibold tracking-tight">Personal Portfolio</span>
     </a>
+    <!-- Nav links. If you add a NEW <section id="x">: add a link here, the same in #mobile-menu below,
+         and add 'x' to the scrollspy list in the <script>. Adding content to existing sections needs nothing here. -->
     <div id="nav-links" class="hidden md:flex gap-8 text-sm text-ink/70">
       <a href="#work" class="link-underline hover:text-accent transition">Work</a>
       <a href="#research" class="link-underline hover:text-accent transition">Research</a>
@@ -153,8 +169,24 @@
       <a href="https://pda.104.com.tw/profile/share/a6GPoJmgqsi5ZNhJLX0slmxT5M0x3mb5"
          target="_blank" rel="noopener"
          class="text-sm font-medium rounded-full border border-ink/20 px-4 py-1.5 hover:border-accent hover:text-accent transition">104 CV ↗</a>
+      <button type="button" id="menu-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu"
+        class="md:hidden grid place-items-center w-9 h-9 rounded-full border border-ink/20 text-ink/70 hover:border-accent hover:text-accent transition">
+        <svg class="icon-bars w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <svg class="icon-x w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
     </div>
   </nav>
+  <!-- mobile dropdown menu -->
+  <div id="mobile-menu" class="md:hidden hidden border-t border-ink/10 bg-paper/95 backdrop-blur">
+    <nav class="mx-auto max-w-6xl px-6 py-2 flex flex-col text-base text-ink/80">
+      <a href="#work" class="py-3 border-b border-ink/5 hover:text-accent transition">Work</a>
+      <a href="#research" class="py-3 border-b border-ink/5 hover:text-accent transition">Research</a>
+      <a href="#skills" class="py-3 border-b border-ink/5 hover:text-accent transition">Skills</a>
+      <a href="#certs" class="py-3 border-b border-ink/5 hover:text-accent transition">Credentials</a>
+      <a href="#experience" class="py-3 border-b border-ink/5 hover:text-accent transition">Experience</a>
+      <a href="#contact" class="py-3 hover:text-accent transition">Contact</a>
+    </nav>
+  </div>
 </header>
 
 <!-- ===================== HERO (warm band) ===================== -->
@@ -249,6 +281,8 @@
     </div>
 
     <div class="mt-10 grid lg:grid-cols-2 gap-6">
+      <!-- ADD/EDIT A PROJECT: copy one <article class="card-lift …"> block below and change its text/tags/links.
+           The grid reflows to 1 column on phones automatically; the mascot peek is added by the script. -->
       <!-- BinBeacon -->
       <article class="card-lift rounded-2xl border border-ink/10 bg-surface p-6" data-aos="fade-up">
         <div class="flex items-center justify-between">
@@ -591,6 +625,18 @@
     try { localStorage.setItem('theme', dark ? 'dark' : 'light'); } catch(e){}
   });
 
+  // mobile menu toggle
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const setMenu = (open) => {
+    mobileMenu.classList.toggle('hidden', !open);
+    menuToggle.classList.toggle('open', open);
+    menuToggle.setAttribute('aria-expanded', String(open));
+    menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  };
+  menuToggle.addEventListener('click', () => setMenu(mobileMenu.classList.contains('hidden')));
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
   // scrollspy — highlight the nav link of the section in view
   const navLinks = [...document.querySelectorAll('#nav-links a')];
   const spy = new IntersectionObserver((entries) => {
@@ -635,6 +681,14 @@
     });
     const col = document.getElementById('avatar-col');       // hero: peeps from behind the photo's right edge
     if (col) col.appendChild(mkPeek('peek-hero'));
+    document.querySelector('section').appendChild(mkPeek('peek-nav'));  // hero: extra mascot hanging from the navbar
+
+    // reveal each section's mascot as it scrolls into view (the CSS only applies this on phone widths;
+    // on desktop the mascot stays hover-triggered, so this observer is a harmless no-op there)
+    const peekObs = new IntersectionObserver((entries) => {
+      entries.forEach(en => en.target.classList.toggle('peek-show', en.isIntersecting));
+    }, { rootMargin: '-20% 0px -25% 0px', threshold: 0 });
+    document.querySelectorAll('.has-peek').forEach(s => peekObs.observe(s));
   }
 </script>
 </body>
